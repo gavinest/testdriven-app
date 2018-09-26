@@ -13,6 +13,9 @@ app.config.from_object(app_settings)
 # instantiate the db
 db = SQLAlchemy(app)
 
+import sys
+print(app.config, file=sys.stderr)
+
 # model
 class User(db.Model):
     __tablename__ = 'users'
