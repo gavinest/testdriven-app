@@ -16,6 +16,40 @@ def add_user(username, email):
 class TestUserService(BaseTestCase):
     '''Tests for the Users Service'''
 
+    def test_main_no_users(self):
+        '''Ensure main route behaves correctly when no users have
+        been added to the database.'''
+        with self.client:
+            response = self.client.get('/')
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'All Users', response.data)
+            self.assertIn(b'<p>No users!</p>', response.data)
+
+    def test_main_with_users(self):
+        '''Ensure main route behaves correctly when users have
+        been added to the database.'''
+        add_user('michael', 'michael@mherman.org')
+        add_user('fletcher', 'fletcher@notreal.com')
+        with self.client:
+            response = self.client.get('/')
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'All Users', response.data)
+            self.assertNotIn(b'<p>No users!</p>', response.data)
+            self.assertIn(b'michael', response.data)
+            self.assertIn(b'fletcher', response.data)
+
+    def test_main_add_user(self):
+        '''Ensure new user can be added to the database.'''
+        with self.client:
+            response = self.client.post(
+                '/',
+                data=dict(username='michael', email='michael@sonotreal.com')
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'All Users', response.data)
+            self.assertNotIn(b'<p>No users!</p>', response.data)
+            self.assertIn(b'michael', response.data)
+
     def test_users(self):
         '''Ensure the /ping route behaves correctly'''
         response = self.client.get('/users/ping')
@@ -137,7 +171,7 @@ class TestUserService(BaseTestCase):
             self.assertIn(
                 'fletcher@notreal.com', data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
-            
+
 
 if __name__ == '__main__':
     unittest.main()
