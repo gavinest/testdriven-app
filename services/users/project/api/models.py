@@ -51,7 +51,7 @@ class User(db.Model):
             return e
 
     @staticmethod
-    def test_decode_auth_token(auth_token):
+    def decode_auth_token(auth_token):
         '''
         decodes the auth token - :param auth token: - :return: integer|string
         '''
