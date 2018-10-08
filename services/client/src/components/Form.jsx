@@ -27,7 +27,7 @@ const Form = (props) => {
                     <input
                         name="email"
                         className="input is-medium"
-                        type="text"
+                        type="email"
                         placeholder="Enter an email address"
                         required
                         value={props.formData.email}
