@@ -12,7 +12,8 @@ class TestAuthBlueprint(BaseTestCase):
 
     def test_user_registration(self):
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'username': 'justatest',
                     'email': 'test@test.com',
@@ -30,7 +31,8 @@ class TestAuthBlueprint(BaseTestCase):
     def test_user_registration_duplicate_email(self):
         add_user('test', 'test@test.com', 'test')
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'username': 'michael',
                     'email': 'test@test.com',
@@ -47,7 +49,8 @@ class TestAuthBlueprint(BaseTestCase):
     def test_user_registration_duplicate_username(self):
         add_user('test', 'test@test.com', 'test')
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'username': 'test',
                     'email': 'test@test2.com',
@@ -63,7 +66,8 @@ class TestAuthBlueprint(BaseTestCase):
 
     def test_user_registration_invalid_json(self):
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({}),
                 content_type='application/json'
             )
@@ -74,7 +78,8 @@ class TestAuthBlueprint(BaseTestCase):
 
     def test_user_registration_invalid_json_keys_no_username(self):
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'email': 'test@test.com',
                     'password': 'test'
@@ -88,7 +93,8 @@ class TestAuthBlueprint(BaseTestCase):
 
     def test_user_registration_invalid_json_keys_no_email(self):
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'username': 'justatest',
                     'password': 'test'
@@ -102,7 +108,8 @@ class TestAuthBlueprint(BaseTestCase):
 
     def test_user_registration_invalid_json_keys_no_password(self):
         with self.client:
-            response = self.client.post('/auth/register',
+            response = self.client.post(
+                '/auth/register',
                 data=json.dumps({
                     'username': 'justatest',
                     'email': 'test@test.com'
@@ -229,7 +236,8 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['data'] is not None)
             self.assertTrue(data['data']['username'] == 'test')
             self.assertTrue(data['data']['email'] == 'test@test.com')
-            self.assertTrue(data['data']['active'] is True)
+            self.assertTrue(data['data']['active'])
+            self.assertFalse(data['data']['admin'])
             self.assertEqual(response.status_code, 200)
 
     def test_invalid_status(self):
@@ -242,4 +250,54 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['status'] == 'fail')
             self.assertTrue(
                 data['message'] == 'Invalid token. Please log in again.')
+            self.assertEqual(response.status_code, 401)
+
+    def test_invalid_logout_inactive(self):
+        add_user('test', 'test@test.com', 'test')
+        # update user
+        user = User.query.filter_by(email='test@test.com').first()
+        user.active = False
+        db.session.commit()
+        with self.client:
+            resp_login = self.client.post(
+                '/auth/login',
+                data=json.dumps({
+                    'email': 'test@test.com',
+                    'password': 'test'
+                }),
+                content_type='application/json'
+            )
+            token = json.loads(resp_login.data.decode())['auth_token']
+            response = self.client.get(
+                '/auth/logout',
+                headers={'Authorization': f'Bearer {token}'}
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Provide a valid auth token.')
+            self.assertEqual(response.status_code, 401)
+
+    def test_invalid_status_inactive(self):
+        add_user('test', 'test@test.com', 'test')
+        # update user
+        user = User.query.filter_by(email='test@test.com').first()
+        user.active = False
+        db.session.commit()
+        with self.client:
+            resp_login = self.client.post(
+                '/auth/login',
+                data=json.dumps({
+                    'email': 'test@test.com',
+                    'password': 'test'
+                }),
+                content_type='application/json'
+            )
+            token = json.loads(resp_login.data.decode())['auth_token']
+            response = self.client.get(
+                'auth/status',
+                headers={'Authorization': f'Bearer {token}'}
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Provide a valid auth token.')
             self.assertEqual(response.status_code, 401)
