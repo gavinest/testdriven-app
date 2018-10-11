@@ -34,6 +34,11 @@ class App extends Component {
     componentDidMount() {
         this.getUsers();
     };
+    componentWillMount() {
+        if (window.localStorage.getItem('authToken')) {
+            this.setState({ isAuthenticated: true });
+        };
+    }
     handleChange(event) {
         const obj = {};
         obj[event.target.name] = event.target.value;
