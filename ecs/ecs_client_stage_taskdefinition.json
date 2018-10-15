@@ -1,5 +1,5 @@
 {
-    "containerDefintions": [
+    "containerDefinitions": [
         {
             "name": "client",
             "image": "%s.dkr.ecr.us-east-1.amazonaws.com/test-driven-client:staging",
