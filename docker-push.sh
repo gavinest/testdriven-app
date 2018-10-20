@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false"]
+if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]
 then
 
     if [[ "$TRAVIS_BRANCH" == "staging" ]]; then
@@ -25,7 +25,7 @@ then
     fi
 
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
-        [ "$TRAVIS_BRANCH" == "production"]
+        [ "$TRAVIS_BRANCH" == "production" ]
     then
         # users
         docker build $USERS_REPO -t $USERS:$COMMIT -f Dockerfile-$DOCKER_ENV
