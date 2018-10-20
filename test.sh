@@ -29,7 +29,7 @@ client () {
 }
 
 # run e2e tests
-ee2() {
+e2e() {
     docker-compose -f docker-compose-stage.yml up -d --build
     docker-compose -f docker-compose-stage.yml run users python manage.py recreate-db
     ./node_modules/.bin/cypress run --config baseUrl=http://localhost
