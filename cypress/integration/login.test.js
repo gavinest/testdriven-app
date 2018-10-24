@@ -38,7 +38,7 @@ describe('Login', () => {
             .get('input[name="email"]').type(email)
             .get('input[name="password"]').type(password)
             .get('input[type="submit"]').click()
-            .wait(100);
+            .wait(50);
 
         // assert user is redirected to '/'
         cy.get('.notification.is-success').contains('Welcome!');
