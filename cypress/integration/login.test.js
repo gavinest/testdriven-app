@@ -75,7 +75,7 @@ describe('Login', () => {
 //                 .get('.navbar-item').contains('Log Out').should('not.be.visible')
 //                 .get('.navbar-item').contains('Log In')
 //                 .get('.navbar-item').contains('Register');
-        });
+//         });
 
     });
 
