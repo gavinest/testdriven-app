@@ -1,16 +1,20 @@
 #!/bin/sh
 
-if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false"]
+if [ -z "$TRAVIS_PULL_REQUEST" ] || [ "$TRAVIS_PULL_REQUEST" == "false" ]
 then
 
     if [[ "$TRAVIS_BRANCH" == "staging" ]]; then
         export DOCKER_ENV=stage
+        export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-629077421.us-east-1.elb.amazonaws.com"
     elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
+        export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1061039309.us-east-1.elb.amazonaws.com"
         export DOCKER_ENV=prod
+        export DATABASE_URL="$AWS_RDS_URI"
+        export SECRET_KEY="$PRODUCTION_SECRET_KEY"
     fi
 
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
-        [ "$TRAVIS_BRANCH" == "production"]
+        [ "$TRAVIS_BRANCH" == "production" ]
     then
         curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
         unzip awscli-bundle.zip
@@ -23,7 +27,7 @@ then
     fi
 
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
-        [ "$TRAVIS_BRANCH" == "production"]
+        [ "$TRAVIS_BRANCH" == "production" ]
     then
         # users
         docker build $USERS_REPO -t $USERS:$COMMIT -f Dockerfile-$DOCKER_ENV
@@ -34,7 +38,7 @@ then
         docker tag $USERS_DB:$COMMIT $REPO/$USERS_DB:$TAG
         docker push $REPO/$USERS_DB:$TAG
         # client
-        docker build $CLIENT_REPO -t $CLIENT:$COMMIT -f Dockerfile-$DOCKER_ENV --build-arg REACT_APP_USERS_SERVICE_URL=TBD
+        docker build $CLIENT_REPO -t $CLIENT:$COMMIT -f Dockerfile-$DOCKER_ENV --build-arg REACT_APP_USERS_SERVICE_URL=$REACT_APP_USERS_SERVICE_URL
         docker tag $CLIENT:$COMMIT $REPO/$CLIENT:$TAG
         docker push $REPO/$CLIENT:$TAG
         # swagger
