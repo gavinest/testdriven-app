@@ -10,13 +10,18 @@ inspect() {
 }
 
 # run server-side tests
-server() {
+dev() {
     docker-compose -f docker-compose-dev.yml up -d --build
     docker-compose -f docker-compose-dev.yml run users python manage.py test
     inspect $? users
     docker-compose -f docker-compose-dev.yml run users flake8 project
     inspect $? users-lint
+    docker-compose -f docker-compose-dev.yml run exercises python manage.py test
+    inspect $? exercises
+    docker-compose -f docker-compose-dev.yml run exercises flake8 project
+    inspect $? exercises-lint
     docker-compose -f docker-compose-dev.yml run client npm test -- --coverage
+    inpsect $? client
     docker-compose -f docker-compose-dev.yml down
 }
 
