@@ -16,12 +16,13 @@ then
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
         [ "$TRAVIS_BRANCH" == "production" ]
     then
+        echo "Getting aws cli"
         curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
         unzip awscli-bundle.zip
         ./awscli-bundle/install -b ~/bin/aws
         export PATH=~/bin:$PATH
         # add AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY env vars
-        eval $(aws ecr get-login --region us-east-1 --no-include-email)
+        eval $(aws ecr get-login --no-include-email --region us-east-1)
         export TAG=$TRAVIS_BRANCH
         export REPO=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
     fi
@@ -29,6 +30,7 @@ then
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
         [ "$TRAVIS_BRANCH" == "production" ]
     then
+        echo "Building and pushing images"
         # users
         docker build $USERS_REPO -t $USERS:$COMMIT -f Dockerfile-$DOCKER_ENV
         docker tag $USERS:$COMMIT $REPO/$USERS:$TAG
