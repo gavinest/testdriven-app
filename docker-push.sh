@@ -5,13 +5,16 @@ then
 
     if [[ "$TRAVIS_BRANCH" == "staging" ]]; then
         export DOCKER_ENV=stage
-        export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-629077421.us-east-1.elb.amazonaws.com "
+        export REACT_APP_USERS_SERVICE_URL="http://testdriven-staging-alb-629077421.us-east-1.elb.amazonaws.com"
     elif [[ "$TRAVIS_BRANCH" == "production" ]]; then
+        export REACT_APP_USERS_SERVICE_URL="http://testdriven-production-alb-1061039309.us-east-1.elb.amazonaws.com"
         export DOCKER_ENV=prod
+        export DATABASE_URL="$AWS_RDS_URI"
+        export SECRET_KEY="$PRODUCTION_SECRET_KEY"
     fi
 
     if [ "$TRAVIS_BRANCH" == "staging" ] || \
-        [ "$TRAVIS_BRANCH" == "production"]
+        [ "$TRAVIS_BRANCH" == "production" ]
     then
         echo "Getting aws cli"
         curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
