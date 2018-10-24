@@ -1,4 +1,4 @@
-const randomString = require('randomString');
+const randomString = require('randomstring');
 
 const username = randomString.generate();
 const email = `${username}@test.com`;
