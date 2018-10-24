@@ -63,18 +63,18 @@ describe('Login', () => {
         // log user out
         // cy.get('.navbar-burger').click();
         // cy.contains('Log Out').click();
-        cy
-            .get('a').contains('Log Out').click();
+//         cy
+//             .get('a').contains('Log Out').click();
 
 
-        // assert '/logout' is displayed properly
-        cy.get('p').contains('You are now logged out.');
-        cy.get('.navbar-menu').within(() => {
-            cy
-                .get('.navbar-item').contains('User Status').should('not.be.visible')
-                .get('.navbar-item').contains('Log Out').should('not.be.visible')
-                .get('.navbar-item').contains('Log In')
-                .get('.navbar-item').contains('Register');
+//         // assert '/logout' is displayed properly
+//         cy.get('p').contains('You are now logged out.');
+//         cy.get('.navbar-menu').within(() => {
+//             cy
+//                 .get('.navbar-item').contains('User Status').should('not.be.visible')
+//                 .get('.navbar-item').contains('Log Out').should('not.be.visible')
+//                 .get('.navbar-item').contains('Log In')
+//                 .get('.navbar-item').contains('Register');
         });
 
     });
