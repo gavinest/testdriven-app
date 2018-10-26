@@ -4,7 +4,6 @@ import 'brace/mode/python';
 import 'brace/theme/solarized_dark';
 import axios from 'axios';
 
-
 class Exercises extends Component {
     constructor (props) {
         super(props)
